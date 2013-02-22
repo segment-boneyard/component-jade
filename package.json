@@ -1,0 +1,22 @@
+{
+  "name": "component-jade",
+  "version": "0.0.1",
+  "description": "Transpiles Jade files for component builds.",
+  "keywords": [
+    "component",
+    "jade"
+  ],
+  "author": "Segment.io <friends@segment.io>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/segmentio/component-jade.git"
+  },
+  "dependencies": {
+    "batch": "0.2.1",
+    "debug": "*",
+    "jade": "0.28.1",
+    "string-to-js": "0.0.1"
+  },
+  "main": "index.js"
+}
