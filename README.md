@@ -1,6 +1,6 @@
 # component-jade
 
-  Transpile Jade files for your component builds.
+  A plugin to transpile Jade files for the component builder.
 
 ## Install
 
@@ -13,7 +13,6 @@
   ```js
   {
     "templates": [
-      "index.jade",
       "template.jade"
     ]
   }
@@ -33,6 +32,13 @@
   builder.build(function(err, res){
     if (err) throw err;
     fs.writeFileSync('build/build.js', res.require + res.js);
-    fs.writeFileSync('build/build.css', res.css);
+    if (res.css) fs.writeFileSync('build/build.css', res.css);
   });
+  ```
+
+  And then require the files in your Javascript:
+
+  ```js
+  var tip      = require('tip')
+    , template = require('template');
   ```

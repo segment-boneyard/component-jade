@@ -1,7 +1,7 @@
 {
   "name": "component-jade",
   "version": "0.0.1",
-  "description": "Transpiles Jade files for component builds.",
+  "description": "A plugin to transpile Jade files for the component builder.",
   "keywords": [
     "component",
     "jade"
