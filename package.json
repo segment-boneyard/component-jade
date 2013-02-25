@@ -1,6 +1,6 @@
 {
   "name": "component-jade",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "A plugin to transpile Jade files for the component builder.",
   "keywords": [
     "component",
@@ -17,6 +17,10 @@
     "debug": "0.7.2",
     "jade": "0.28.1",
     "string-to-js": "0.0.1"
+  },
+  "devDependencies" : {
+    "component-builder" : "git@github.com:calvinfo/builder.js.git#conf-race",
+    "mkdirp": "*"
   },
   "main": "index.js"
 }

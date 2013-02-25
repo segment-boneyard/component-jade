@@ -2,6 +2,7 @@ var fs     = require('fs')
   , Batch  = require('batch')
   , debug  = require('debug')('component-jade')
   , jade   = require('jade')
+  , path   = require('path')
   , str2js = require('string-to-js');
 
 
@@ -33,18 +34,24 @@ module.exports = function compileJade (builder) {
     jadeFiles.forEach(function (jadeFile) {
 
       batch.push(function (done) {
-        var path = builder.path(jadeFile)
-          , name = jadeFile.split('.')[0] + '.js';
+        var jadePath = builder.path(jadeFile)
+          , name = path.basename(jadeFile, '.jade') + '.js';
 
         debug('compiling: %s', jadeFile);
 
         var options = {
-          compileDebug: compileDebug
+          compileDebug: compileDebug,
+          client: client
         };
 
-        jade.renderFile(path, options, function (err, str) {
+        fs.readFile(jadePath, function (err, contents) {
+
           if (err) throw err;
-          builder.addFile('scripts', name, str2js(str));
+
+          var fn        = jade.compile(contents, options)
+            , moduleStr = 'module.exports =' + fn.toString();
+
+          builder.addFile('scripts', name, moduleStr);
           builder.removeFile('templates', jadeFile);
           done();
         });
