@@ -1,6 +1,6 @@
 var fs     = require('fs')
   , Batch  = require('batch')
-  , debug  = require('debug')('component:jade')
+  , debug  = require('debug')('component-jade')
   , jade   = require('jade')
   , str2js = require('string-to-js');
 
