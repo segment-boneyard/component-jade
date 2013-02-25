@@ -31,6 +31,7 @@ module.exports = function compileJade (builder) {
     var batch = new Batch();
 
     jadeFiles.forEach(function (jadeFile) {
+
       batch.push(function (done) {
         var path = builder.path(jadeFile)
           , name = jadeFile.split('.')[0] + '-template.js';
@@ -61,15 +62,15 @@ module.exports = function compileJade (builder) {
  * Jade's `runtime.js`.
  */
 
-// exports.client = function (enabled) {
-//   client = enabled;
-// };
+module.exports.client = function (enabled) {
+  client = enabled;
+};
 
 
 /**
  * Toggle whether to output debug information.
  */
 
-// exports.compileDebug = function (enabled) {
-//   compileDebug = enabled;
-// };
+module.exports.compileDebug = function (enabled) {
+  compileDebug = enabled;
+};
