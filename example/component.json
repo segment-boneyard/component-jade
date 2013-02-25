@@ -1,11 +1,5 @@
 {
   "name": "example",
-  "main": [
-    "index.js"
-  ],
-  "scripts": [
-    "index.js"
-  ],
   "templates": [
     "template.jade"
   ]

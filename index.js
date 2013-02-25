@@ -1,58 +1,51 @@
-var fs     = require('fs')
-  , Batch  = require('batch')
-  , debug  = require('debug')('component-jade')
+var Batch  = require('batch')
+  , fs     = require('fs')
   , jade   = require('jade')
   , path   = require('path')
-  , str2js = require('string-to-js');
+  , debug  = require('debug')('component-jade');
 
 
 
 /**
- * Settings.
+ * Options.
  */
 
-var compileDebug = false;
-
-var client = true;
+var options = {
+  compileDebug : false,
+  client       : true
+};
 
 
 /**
  * Replace Jade files with compiled Javascript files.
  */
 
-module.exports = function compileJade (builder) {
+module.exports = function (builder) {
 
   builder.hook('before scripts', function (builder, callback) {
     if (!builder.conf.templates) return callback();
 
-    var jadeFiles = builder.conf.templates.filter(function (name) {
-      return name.match(/\.jade$/i);
-    });
+    var files = builder.conf.templates.filter(jadeFilter)
+      , batch = new Batch();
 
-    var batch = new Batch();
-
-    jadeFiles.forEach(function (jadeFile) {
-
+    files.forEach(function (file) {
       batch.push(function (done) {
-        var jadePath = builder.path(jadeFile)
-          , name = path.basename(jadeFile, '.jade') + '.js';
+        debug('compiling: %s', file);
 
-        debug('compiling: %s', jadeFile);
+        var filePath = builder.path(file)
+          , name     = path.basename(file, '.jade') + '.js';
 
-        var options = {
-          compileDebug: compileDebug,
-          client: client
-        };
+        fs.readFile(filePath, function (err, contents) {
+          if (err) {
+            debug('error compiling: %s, %s', file, err);
+            return done(err);
+          }
 
-        fs.readFile(jadePath, function (err, contents) {
+          var fn     = jade.compile(contents, options)
+            , string = 'module.exports = ' + fn.toString();
 
-          if (err) throw err;
-
-          var fn        = jade.compile(contents, options)
-            , moduleStr = 'module.exports =' + fn.toString();
-
-          builder.addFile('scripts', name, moduleStr);
-          builder.removeFile('templates', jadeFile);
+          builder.addFile('scripts', name, string);
+          builder.removeFile('templates', file);
           done();
         });
       });
@@ -65,11 +58,11 @@ module.exports = function compileJade (builder) {
 
 /**
  * Toggle using output a smaller, client-friendly template that only depends on
- * Jade's `runtime.js`.
+ * Jade's `runtime.js` (which you'll need to add separately).
  */
 
 module.exports.client = function (enabled) {
-  client = enabled;
+  options.client = enabled;
 };
 
 
@@ -77,6 +70,15 @@ module.exports.client = function (enabled) {
  * Toggle whether to output debug information.
  */
 
-module.exports.compileDebug = function (enabled) {
-  compileDebug = enabled;
+module.exports.debug = function (enabled) {
+  options.compileDebug = enabled;
 };
+
+
+/**
+ * Filtering function for .sass and .scss files.
+ */
+
+function jadeFilter (filename) {
+  if (path.extname(filename) === '.jade') return true;
+}

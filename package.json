@@ -15,12 +15,10 @@
   "dependencies": {
     "batch": "0.2.1",
     "debug": "0.7.2",
-    "jade": "0.28.1",
-    "string-to-js": "0.0.1"
+    "jade": "0.28.1"
   },
   "devDependencies" : {
-    "component-builder" : "git@github.com:calvinfo/builder.js.git#conf-race",
-    "mkdirp": "*"
+    "component-builder" : "git://github.com/calvinfo/builder.js.git#conf-race"
   },
   "main": "index.js"
 }
