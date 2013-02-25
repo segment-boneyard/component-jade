@@ -10,8 +10,6 @@ var fs     = require('fs')
  * Settings.
  */
 
-var client = true;
-
 var compileDebug = false;
 
 
@@ -38,7 +36,6 @@ module.exports = function compileJade (builder) {
         debug('compiling: %s', jadeFile);
 
         var options = {
-          client: client,
           compileDebug: compileDebug
         };
 
@@ -53,16 +50,6 @@ module.exports = function compileJade (builder) {
 
     batch.end(callback);
   });
-};
-
-
-/**
- * Toggle using output a smaller, client-friendly template that only depends on
- * Jade's `runtime.js`.
- */
-
-exports.client = function (enabled) {
-  client = enabled;
 };
 
 
