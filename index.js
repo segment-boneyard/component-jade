@@ -10,9 +10,9 @@ var fs     = require('fs')
  * Settings.
  */
 
-var client = true;
-
 var compileDebug = false;
+
+var client = true;
 
 
 /**
@@ -34,16 +34,15 @@ module.exports = function compileJade (builder) {
 
       batch.push(function (done) {
         var path = builder.path(jadeFile)
-          , name = jadeFile.split('.')[0] + '-template.js';
+          , name = jadeFile.split('.')[0] + '.js';
 
         debug('compiling: %s', jadeFile);
 
         var options = {
-          client: client,
           compileDebug: compileDebug
         };
 
-        jade.render(fs.readFileSync(path, 'utf-8'), options, function (err, str) {
+        jade.renderFile(path, options, function (err, str) {
           if (err) throw err;
           builder.addFile('scripts', name, str2js(str));
           builder.removeFile('templates', jadeFile);
