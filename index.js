@@ -61,15 +61,15 @@ module.exports = function compileJade (builder) {
  * Jade's `runtime.js`.
  */
 
-exports.client = function (enabled) {
-  client = enabled;
-};
+// exports.client = function (enabled) {
+//   client = enabled;
+// };
 
 
 /**
  * Toggle whether to output debug information.
  */
 
-exports.compileDebug = function (enabled) {
-  compileDebug = enabled;
-};
+// exports.compileDebug = function (enabled) {
+//   compileDebug = enabled;
+// };
