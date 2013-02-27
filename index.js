@@ -29,36 +29,43 @@ module.exports = function (builder) {
  * Compile jade.
  */
 
-function compileJade (builder) {
+function compileJade (builder, callback) {
   var conf = builder.conf;
 
-  if (!conf.templates) return;
+  if (!conf.templates) return callback();
 
-  var files = conf.templates.filter(filterJade);
+  var files = conf.templates.filter(filterJade)
+    , batch = new Batch();
 
   files.forEach(function (file) {
-    debug('compiling: %s', file);
+    batch.push(function (done) {
+      debug('compiling: %s', file);
 
-    var contents = fs.readFileSync(builder.path(file), 'utf8');
+      var name    = builder.root ? conf.name : builder.basename
+        , runtime = 'var jade = require("/' + name + '/jade-runtime");\n';
 
-    // Add the `filename` option so Jade can `include` and `extend`.
-    var options = {
-      client       : true,
-      compileDebug : false,
-      filename     : path.resolve(builder.div, file)
-    };
+      // Add the `filename` option so Jade can `include` and `extend`.
+      var options = {
+        client       : true,
+        compileDebug : false,
+        filename     : path.resolve(builder.div, file)
+      };
 
-    // Compile, and turn it into a string with the runtime required.
-    var packageName = builder.root ? conf.name : builder.basename;
-    var fn = jade.compile(contents, options);
-    fn = 'module.exports = ' + fn;
-    fn = 'var jade = require("/' + packageName + '/jade-runtime");\n' + fn;
+      var contents = fs.readFile(builder.path(file), function (err, contents) {
+        // Compile, and turn it into a string with the runtime required.
+        var fn = jade.compile(contents, options);
+        fn = runtime + 'module.exports = ' + fn;
 
-    // Add the new `.js` file and remove the old `.jade` one.
-    var newFile = path.basename(file, '.jade') + '.js';
-    builder.addFile('scripts', newFile, fn);
-    builder.removeFile('templates', file);
+        // Add the new `.js` file and remove the old `.jade` one.
+        var newFile = path.basename(file, '.jade') + '.js';
+        builder.addFile('scripts', newFile, fn);
+        builder.removeFile('templates', file);
+        done();
+      });
+    });
   });
+
+  batch.end(callback);
 }
 
 
