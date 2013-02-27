@@ -12,7 +12,8 @@ var Batch  = require('batch')
 
 var options = {
   compileDebug : false,
-  client       : true
+  client       : true,
+  filename     : null
 };
 
 
@@ -72,6 +73,15 @@ module.exports.client = function (enabled) {
 
 module.exports.debug = function (enabled) {
   options.compileDebug = enabled;
+};
+
+
+/**
+ * Set the path used to resolve Jade includes and extends.
+ */
+
+module.exports.path = function (path) {
+  options.filename = path;
 };
 
 
