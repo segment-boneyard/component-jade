@@ -7,88 +7,65 @@ var Batch  = require('batch')
 
 
 /**
- * Options.
- */
-
-var options = {
-  compileDebug : false,
-  client       : true,
-  filename     : null
-};
-
-
-/**
  * Replace Jade files with compiled Javascript files.
  */
 
 module.exports = function (builder) {
 
-  builder.hook('before scripts', function (builder, callback) {
-    if (!builder.conf.templates) return callback();
+  // Add the runtime.js to our top-level package's `scripts` array.
+  builder.on('config', function () {
+    debug('adding jade runtime');
 
-    var files = builder.conf.templates.filter(jadeFilter)
-      , batch = new Batch();
-
-    files.forEach(function (file) {
-      batch.push(function (done) {
-        debug('compiling: %s', file);
-
-        var filePath = builder.path(file)
-          , name     = path.basename(file, '.jade') + '.js';
-
-        fs.readFile(filePath, function (err, contents) {
-          if (err) {
-            debug('error compiling: %s, %s', file, err);
-            return done(err);
-          }
-
-          var fn     = jade.compile(contents, options)
-            , string = 'module.exports = ' + fn.toString();
-
-          builder.addFile('scripts', name, string);
-          builder.removeFile('templates', file);
-          done();
-        });
-      });
-    });
-
-    batch.end(callback);
+    var runtime = fs.readFileSync(__dirname + '/runtime.js', 'utf8');
+    builder.addFile('scripts', 'jade-runtime.js', runtime);
   });
+
+  // Before processing any scripts, convert `.jade` files to Javascript.
+  builder.hook('before scripts', compileJade);
 };
 
 
 /**
- * Toggle using output a smaller, client-friendly template that only depends on
- * Jade's `runtime.js` (which you'll need to add separately).
+ * Compile jade.
  */
 
-module.exports.client = function (enabled) {
-  options.client = enabled;
-};
+function compileJade (builder) {
+  var conf = builder.conf;
+
+  if (!conf.templates) return;
+
+  var files = conf.templates.filter(filterJade);
+
+  files.forEach(function (file) {
+    debug('compiling: %s', file);
+
+    var contents = fs.readFileSync(builder.path(file), 'utf8');
+
+    // Add the `filename` option so Jade can `include` and `extend`.
+    var options = {
+      client       : true,
+      compileDebug : false,
+      filename     : path.resolve(builder.div, file)
+    };
+
+    // Compile, and turn it into a string with the runtime required.
+    var packageName = builder.root ? conf.name : builder.basename;
+    var fn = jade.compile(contents, options);
+    fn = 'module.exports = ' + fn;
+    fn = 'var jade = require("/' + packageName + '/jade-runtime");\n' + fn;
+
+    // Add the new `.js` file and remove the old `.jade` one.
+    var newFile = path.basename(file, '.jade') + '.js';
+    builder.addFile('scripts', newFile, fn);
+    builder.removeFile('templates', file);
+  });
+}
 
 
 /**
- * Toggle whether to output debug information.
+ * Filter for .jade files.
  */
 
-module.exports.debug = function (enabled) {
-  options.compileDebug = enabled;
-};
-
-
-/**
- * Set the path used to resolve Jade includes and extends.
- */
-
-module.exports.path = function (path) {
-  options.filename = path;
-};
-
-
-/**
- * Filtering function for .sass and .scss files.
- */
-
-function jadeFilter (filename) {
+function filterJade (filename) {
   if (path.extname(filename) === '.jade') return true;
 }
