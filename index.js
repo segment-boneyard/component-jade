@@ -44,21 +44,14 @@ function compileJade (builder, callback) {
       var name    = builder.root ? conf.name : builder.basename
         , runtime = 'var jade = require("/' + name + '/jade-runtime");\n';
 
-      // Add the `filename` option so Jade can `include` and `extend`.
-      var options = {
-        client       : true,
-        compileDebug : false,
-        filename     : path.resolve(builder.div, file)
-      };
-
-      var contents = fs.readFile(builder.path(file), function (err, contents) {
+      fs.readFile(builder.path(file), function (err, contents) {
         // Compile, and turn it into a string with the runtime required.
-        var fn = jade.compile(contents, options);
-        fn = runtime + 'module.exports = ' + fn;
+        var js = jade.compile(contents, { client: true, compileDebug: false });
+        js = runtime + 'module.exports = ' + js;
 
         // Add the new `.js` file and remove the old `.jade` one.
         var newFile = path.basename(file, '.jade') + '.js';
-        builder.addFile('scripts', newFile, fn);
+        builder.addFile('scripts', newFile, js);
         builder.removeFile('templates', file);
         done();
       });
