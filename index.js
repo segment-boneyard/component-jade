@@ -1,5 +1,4 @@
-var Batch  = require('batch')
-  , fs     = require('fs')
+var fs     = require('fs')
   , jade   = require('jade')
   , path   = require('path')
   , debug  = require('debug')('component-jade');
@@ -30,35 +29,25 @@ module.exports = function (builder) {
  */
 
 function compileJade (builder, callback) {
-  var conf = builder.conf;
+  if (!builder.conf.templates) return callback();
 
-  if (!conf.templates) return callback();
-
-  var files = conf.templates.filter(filterJade)
-    , batch = new Batch();
+  var files = builder.conf.templates.filter(filterJade);
 
   files.forEach(function (file) {
-    batch.push(function (done) {
-      debug('compiling: %s', file);
+    debug('compiling: %s', file);
 
-      var name    = builder.root ? conf.name : builder.basename
-        , runtime = 'var jade = require("/' + name + '/jade-runtime");\n';
+    var contents = fs.readFileSync(builder.path(file), 'utf8')
+      , js       = jade.compile(contents, { client: true, compileDebug: false });
 
-      fs.readFile(builder.path(file), function (err, contents) {
-        // Compile, and turn it into a string with the runtime required.
-        var js = jade.compile(contents, { client: true, compileDebug: false });
-        js = runtime + 'module.exports = ' + js;
+    var name    = builder.root ? builder.conf.name : builder.basename
+      , runtime = 'var jade = require("/' + name + '/jade-runtime");\n'
+      , exports = 'module.exports = ';
 
-        // Add the new `.js` file and remove the old `.jade` one.
-        var newFile = path.basename(file, '.jade') + '.js';
-        builder.addFile('scripts', newFile, js);
-        builder.removeFile('templates', file);
-        done();
-      });
-    });
+    js = runtime + exports + js;
+
+    var newFile = path.basename(file, path.extname(file)) + '.js';
+    builder.addFile('scripts', newFile, js);
   });
-
-  batch.end(callback);
 }
 
 

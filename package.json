@@ -13,7 +13,6 @@
     "url": "git://github.com/segmentio/component-jade.git"
   },
   "dependencies": {
-    "batch": "0.2.1",
     "debug": "0.7.2",
     "jade": "0.28.1"
   },
