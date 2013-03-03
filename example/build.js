@@ -388,7 +388,6 @@ exports.rethrow = function rethrow(err, filename, lineno){
 })({});
 });
 require.register("example/template.js", function(exports, require, module){
-var jade = require("/example/jade-runtime");
 module.exports = function anonymous(locals, attrs, escape, rethrow, merge) {
 attrs = attrs || jade.attrs; escape = escape || jade.escape; rethrow = rethrow || jade.rethrow; merge = merge || jade.merge;
 var buf = [];
@@ -412,3 +411,4 @@ return buf.join("");
 }
 });
 
+require("example/jade-runtime")

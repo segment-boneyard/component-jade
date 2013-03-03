@@ -10,13 +10,15 @@ var fs     = require('fs')
  */
 
 module.exports = function (builder) {
-
   // Add the runtime.js to our top-level package's `scripts` array.
   builder.on('config', function () {
-    debug('adding jade runtime');
+    debug('adding jade-runtime.js to %s', builder.basename);
 
+    // Add our runtime to the builder, and add a require call for our runtime,
+    // so it's global.
     var runtime = fs.readFileSync(__dirname + '/runtime.js', 'utf8');
     builder.addFile('scripts', 'jade-runtime.js', runtime);
+    builder.append('require("' + builder.basename + '/jade-runtime")');
   });
 
   // Before processing any scripts, convert `.jade` files to Javascript.
@@ -29,25 +31,24 @@ module.exports = function (builder) {
  */
 
 function compileJade (builder, callback) {
+  // Grab our Jade templates.
   if (!builder.conf.templates) return callback();
-
   var files = builder.conf.templates.filter(filterJade);
 
   files.forEach(function (file) {
     debug('compiling: %s', file);
 
-    var contents = fs.readFileSync(builder.path(file), 'utf8')
-      , js       = jade.compile(contents, { client: true, compileDebug: false });
+    // Read and compile our Jade.
+    var string = fs.readFileSync(builder.path(file), 'utf8')
+      , js     = jade.compile(string, { client: true, compileDebug: false });
 
-    var name    = builder.root ? builder.conf.name : builder.basename
-      , runtime = 'var jade = require("/' + name + '/jade-runtime");\n'
-      , exports = 'module.exports = ';
-
-    js = runtime + exports + js;
-
-    var newFile = path.basename(file, path.extname(file)) + '.js';
-    builder.addFile('scripts', newFile, js);
+    // Add our new compiled version to the builder, with the same name that the
+    // Jade template had.
+    file = path.basename(file, path.extname(file)) + '.js';
+    builder.addFile('scripts', file, 'module.exports = ' + js);
   });
+
+  callback();
 }
 
 

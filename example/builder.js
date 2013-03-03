@@ -9,6 +9,6 @@ var builder = new Builder(__dirname);
 builder.use(jade);
 
 builder.build(function(err, res){
-  if (err) throw err;
+  if (err) console.log(err);
   fs.writeFileSync('example/build.js', res.require + res.js);
 });
