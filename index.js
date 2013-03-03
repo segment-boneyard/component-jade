@@ -15,7 +15,7 @@ module.exports = function (builder) {
     debug('adding jade-runtime.js to %s', builder.basename);
 
     // Add our runtime to the builder, and add a require call for our runtime,
-    // so it's global.
+    // so it's global for all future template functions.
     var runtime = fs.readFileSync(__dirname + '/runtime.js', 'utf8');
     builder.addFile('scripts', 'jade-runtime.js', runtime);
     builder.append('require("' + builder.basename + '/jade-runtime")');
@@ -30,22 +30,21 @@ module.exports = function (builder) {
  * Compile jade.
  */
 
-function compileJade (builder, callback) {
+function compileJade (pkg, callback) {
   // Grab our Jade templates.
-  if (!builder.conf.templates) return callback();
-  var files = builder.conf.templates.filter(filterJade);
+  if (!pkg.conf.templates) return callback();
+  var files = pkg.conf.templates.filter(filterJade);
 
   files.forEach(function (file) {
     debug('compiling: %s', file);
 
     // Read and compile our Jade.
-    var string = fs.readFileSync(builder.path(file), 'utf8')
-      , js     = jade.compile(string, { client: true, compileDebug: false });
+    var string = fs.readFileSync(pkg.path(file), 'utf8')
+      , fn     = jade.compile(string, { client: true, compileDebug: false });
 
-    // Add our new compiled version to the builder, with the same name that the
-    // Jade template had.
+    // Add our new compiled version to the package, with the same name.
     file = path.basename(file, path.extname(file)) + '.js';
-    builder.addFile('scripts', file, 'module.exports = ' + js);
+    pkg.addFile('scripts', file, 'module.exports = ' + fn);
   });
 
   callback();

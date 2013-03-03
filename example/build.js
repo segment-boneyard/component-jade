@@ -206,6 +206,12 @@ require.relative = function(parent) {
 
   return localRequire;
 };
+require.register("example/index.js", function(exports, require, module){
+var template = require('./template')
+  , html     = template({ youAreUsingJade : true });
+
+document.body.innerHTML = html;
+});
 require.register("example/jade-runtime.js", function(exports, require, module){
 
 jade = (function(exports){
@@ -393,10 +399,7 @@ attrs = attrs || jade.attrs; escape = escape || jade.escape; rethrow = rethrow |
 var buf = [];
 with (locals || {}) {
 var interp;
-buf.push('<!DOCTYPE html><html lang="en"><head><title>');
-var __val__ = pageTitle
-buf.push(escape(null == __val__ ? "" : __val__));
-buf.push('</title><script type="text/javascript">if (foo) {\n   bar()\n}</script></head><body><h1>Jade - node template engine</h1><div id="container">');
+buf.push('<h1>Jade - node template engine</h1><div id="container">');
 if ( youAreUsingJade)
 {
 buf.push('<p>You are amazing</p>');
@@ -405,10 +408,11 @@ else
 {
 buf.push('<p>Get on it!</p>');
 }
-buf.push('</div></body></html>');
+buf.push('</div>');
 }
 return buf.join("");
 }
 });
+require.alias("example/index.js", "example/index.js");
 
 require("example/jade-runtime")
