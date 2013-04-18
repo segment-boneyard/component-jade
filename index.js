@@ -32,8 +32,8 @@ module.exports = function (builder) {
 
 function compileJade (pkg, callback) {
   // Grab our Jade templates.
-  if (!pkg.conf.templates) return callback();
-  var files = pkg.conf.templates.filter(filterJade);
+  if (!pkg.config.templates) return callback();
+  var files = pkg.config.templates.filter(filterJade);
 
   files.forEach(function (file) {
     debug('compiling: %s', file);
