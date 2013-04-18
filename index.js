@@ -17,7 +17,7 @@ module.exports = function (builder) {
   // so it's global for all future template functions.
   var runtime = fs.readFileSync(__dirname + '/runtime.js', 'utf8');
   builder.addFile('scripts', 'jade-runtime.js', runtime);
-  builder.append('require("' + builder.basename + '/jade-runtime")');
+  builder.append('require("' + builder.basename + '/jade-runtime");\n');
 
   // Before processing any scripts, convert `.jade` files to Javascript.
   builder.hook('before scripts', compileJade);
