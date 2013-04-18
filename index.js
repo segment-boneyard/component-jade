@@ -11,15 +11,13 @@ var fs     = require('fs')
 
 module.exports = function (builder) {
   // Add the runtime.js to our top-level package's `scripts` array.
-  builder.on('config', function () {
-    debug('adding jade-runtime.js to %s', builder.basename);
+  debug('adding jade-runtime.js to %s', builder.basename);
 
-    // Add our runtime to the builder, and add a require call for our runtime,
-    // so it's global for all future template functions.
-    var runtime = fs.readFileSync(__dirname + '/runtime.js', 'utf8');
-    builder.addFile('scripts', 'jade-runtime.js', runtime);
-    builder.append('require("' + builder.basename + '/jade-runtime")');
-  });
+  // Add our runtime to the builder, and add a require call for our runtime,
+  // so it's global for all future template functions.
+  var runtime = fs.readFileSync(__dirname + '/runtime.js', 'utf8');
+  builder.addFile('scripts', 'jade-runtime.js', runtime);
+  builder.append('require("' + builder.basename + '/jade-runtime");\n');
 
   // Before processing any scripts, convert `.jade` files to Javascript.
   builder.hook('before scripts', compileJade);
@@ -32,8 +30,8 @@ module.exports = function (builder) {
 
 function compileJade (pkg, callback) {
   // Grab our Jade templates.
-  if (!pkg.conf.templates) return callback();
-  var files = pkg.conf.templates.filter(filterJade);
+  if (!pkg.config.templates) return callback();
+  var files = pkg.config.templates.filter(filterJade);
 
   files.forEach(function (file) {
     debug('compiling: %s', file);
