@@ -34,7 +34,7 @@ function compileJade (pkg, callback) {
   var files = pkg.config.templates.filter(filterJade);
 
   files.forEach(function (file) {
-    debug('compiling: %s', file);
+    debug('compiling: %s', pkg.path(file));
 
     var fullPath = pkg.path(file);
 
@@ -43,7 +43,7 @@ function compileJade (pkg, callback) {
       , fn     = jade.compile(string, { client: true, compileDebug: false, filename: fullPath });
 
     // Add our new compiled version to the package, with the same name.
-    file = path.basename(file, path.extname(file)) + '.js';
+    file = file.slice(0, file.length - 5) + '.js';
     pkg.addFile('scripts', file, 'module.exports = ' + fn);
   });
 
