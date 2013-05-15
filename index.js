@@ -36,9 +36,11 @@ function compileJade (pkg, callback) {
   files.forEach(function (file) {
     debug('compiling: %s', pkg.path(file));
 
+    var fullPath = pkg.path(file);
+
     // Read and compile our Jade.
-    var string = fs.readFileSync(pkg.path(file), 'utf8')
-      , fn     = jade.compile(string, { client: true, compileDebug: false });
+    var string = fs.readFileSync(fullPath, 'utf8')
+      , fn     = jade.compile(string, { client: true, compileDebug: false, filename: fullPath });
 
     // Add our new compiled version to the package, with the same name.
     file = file.slice(0, file.length - 5) + '.js';
