@@ -43,9 +43,9 @@
     , template = require('template');
   ```
 
-  # License
+# License
 
-  (The MIT License)
+(The MIT License)
 
 Copyright (c) 2013 Segment.io &lt;friends@segment.io&gt;
 
