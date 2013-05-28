@@ -14,7 +14,7 @@
   },
   "dependencies": {
     "debug": "0.7.2",
-    "jade": "0.28.1"
+    "jade": "0.30.0"
   },
   "devDependencies" : {
     "component-builder" : "~0.7.0"
