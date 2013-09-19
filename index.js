@@ -48,7 +48,7 @@ module.exports = function(options) {
         , fn     = jade[!options.toHtml ? 'compile' : 'render'](string, { client: true, compileDebug: false, filename: fullPath });
 
       if(typeof fn === 'string') {
-        fn = '\''+escape(fn)+'\'';
+        fn = '\''+addslashes(fn)+'\'';
       }
 
       // Add our new compiled version to the package, with the same name.
@@ -58,7 +58,9 @@ module.exports = function(options) {
 
     callback();
   }
-
+  function addslashes( str ) {
+    return (str + '').replace(/[\\"']/g, '\\$&').replace(/\u0000/g, '\\0');
+  }
 
   /**
    * Filter for .jade files.
