@@ -1,6 +1,6 @@
 {
   "name": "component-jade",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "A plugin to transpile Jade files for the component builder.",
   "keywords": [
     "component",
@@ -14,7 +14,7 @@
   },
   "dependencies": {
     "debug": "0.7.2",
-    "jade": "0.30.0"
+    "jade": "0.35.0"
   },
   "devDependencies" : {
     "component-builder" : "~0.7.0"
