@@ -13,12 +13,11 @@ module.exports = function(options) {
   options = options || {};
 
   return function (builder) {
-    // Add the runtime.js to our top-level package's `scripts` array.
-    debug('adding jade-runtime.js to %s', builder.config.name);
-
-    // Add our runtime to the builder, and add a require call for our runtime,
-    // so it's global for all future template functions.
-    if(!options.toHtml) {
+    if(!options.html) {
+      // Add the runtime.js to our top-level package's `scripts` array.
+      debug('adding jade-runtime.js to %s', builder.config.name);
+      // Add our runtime to the builder, and add a require call for our runtime,
+      // so it's global for all future template functions.
       var runtime = fs.readFileSync(__dirname + '/runtime.js', 'utf8');
       builder.addFile('scripts', 'jade-runtime.js', runtime);
       builder.append('require("' + builder.config.name + '/jade-runtime");\n');
@@ -44,20 +43,23 @@ module.exports = function(options) {
       var fullPath = pkg.path(file);
 
       // Read and compile our Jade.
-      var string = fs.readFileSync(fullPath, 'utf8')
-        , fn     = jade[!options.toHtml ? 'compile' : 'render'](string, { client: true, compileDebug: false, filename: fullPath });
+      var string   = fs.readFileSync(fullPath, 'utf8')
+        , compiled = jade[!options.html ? 'compile' : 'render'](string, { client: true, compileDebug: false, filename: fullPath });
 
-      if(typeof fn === 'string') {
-        fn = '\''+addslashes(fn)+'\'';
-        fn = fn.replace(/\n/g,'\'+\n\''); // line breaks need concatenation
+      if(typeof compiled === 'string') {
+        compiled = escapeHtml(compiled);
       }
 
       // Add our new compiled version to the package, with the same name.
       file = file.slice(0, file.length - 5) + '.js';
-      pkg.addFile('scripts', file, 'module.exports = ' + fn);
+      pkg.addFile('scripts', file, 'module.exports = ' + compiled);
     });
 
     callback();
+  }
+  function escapeHtml( str ) {
+    str = '\''+addslashes(str)+'\'';
+    return str.replace(/\n/g,'\'+\n\''); // line breaks need concatenation
   }
   function addslashes( str ) {
     return (str + '').replace(/[\\"']/g, '\\$&').replace(/\u0000/g, '\\0');
