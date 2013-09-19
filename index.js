@@ -12,7 +12,7 @@ var fs     = require('fs')
 module.exports = function(options) {
   options = options || {};
 
-  function (builder) {
+  return function (builder) {
     // Add the runtime.js to our top-level package's `scripts` array.
     debug('adding jade-runtime.js to %s', builder.config.name);
 
