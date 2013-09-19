@@ -45,7 +45,7 @@ module.exports = function(options) {
 
       // Read and compile our Jade.
       var string = fs.readFileSync(fullPath, 'utf8')
-        , fn     = jade[!options.toHtml ? 'compile', 'render'](string, { client: true, compileDebug: false, filename: fullPath });
+        , fn     = jade[!options.toHtml ? 'compile' : 'render'](string, { client: true, compileDebug: false, filename: fullPath });
 
       if(typeof fn === 'string') {
         fn = '\''+escape(fn)+'\'';
