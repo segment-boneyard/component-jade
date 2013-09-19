@@ -49,6 +49,7 @@ module.exports = function(options) {
 
       if(typeof fn === 'string') {
         fn = '\''+addslashes(fn)+'\'';
+        fn = fn.replace(/\n/g,'\'+\n\''); // line breaks need concatenation
       }
 
       // Add our new compiled version to the package, with the same name.
