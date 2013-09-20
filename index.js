@@ -95,12 +95,11 @@ function jadeCompiler (options) {
  */
 
 function escapeHtml (string) {
-  string = '\'' + string;
   string = string
     .replace(/[\\"']/g, '\\$&') // escape slashes and quotes
     .replace(/\u0000/g, '\\0')
     .replace(/\n/g,'\'+\n\''); // line breaks should be concatenated
-  string = string + '\'';
+  string = '\'' + string + '\'';
   return string;
 }
 
