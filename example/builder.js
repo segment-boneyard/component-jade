@@ -2,8 +2,6 @@ var Builder = require('component-builder')
   , fs      = require('fs')
   , jade    = require('../');
 
-
-
 var builder = new Builder(__dirname);
 
 builder.use(jade);
