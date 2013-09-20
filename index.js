@@ -80,6 +80,7 @@ function jadeCompiler (options) {
       // Add our new compiled version to the package, with the same name.
       file = file.slice(0, file.length - 5) + '.js';
       pkg.addFile('scripts', file, 'module.exports = ' + compiled);
+      pkg.removeFile('templates', file);
     });
 
     callback();
