@@ -70,7 +70,7 @@ function jadeCompiler (options) {
       var string = fs.readFileSync(fullPath, 'utf8');
       var method = options.html ? 'render' : 'compile';
       var compiled = jade[method](string, {
-        client: true,
+        client: !options.html,
         compileDebug: false,
         filename: fullPath
       });
