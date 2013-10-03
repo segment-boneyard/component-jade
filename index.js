@@ -78,6 +78,7 @@ function jadeCompiler (options) {
       if (options.html) compiled = escapeHtml(compiled);
 
       // Add our new compiled version to the package, with the same name.
+      pkg.removeFile('templates', file);
       file = file.slice(0, file.length - 5) + '.js';
       pkg.addFile('scripts', file, 'module.exports = ' + compiled);
     });
