@@ -6,6 +6,30 @@
 
     $ npm install component-jade
 
+## Dependencies
+
+  To be forward compatible, and to give you greater choice in which jade version
+  to use, `component-jade` does not itself pull in jade. You have to define the
+  dependency yourself, like this:
+
+  ```json
+  {
+    "dependencies": {
+      "jade": "~ 1.0.0"
+    }
+  }
+  ```
+
+  And the same for your `component.json`:
+
+  ```json
+  {
+    "dependencies": {
+      "visionmedia/jade": "*"
+    }
+  }
+  ```
+
 ## Usage
 
   Add your `.jade` files to the `templates` array in your `component.json`:
@@ -35,6 +59,10 @@
     if (res.css) fs.writeFileSync('build/build.css', res.css);
   });
   ```
+
+  Or when using the commandline:
+
+    $ component build --use component-jade
 
   And then require the files in your Javascript:
 

@@ -6,5 +6,8 @@
   "templates": [
     "template.jade"
   ],
-  "main": "index.js"
+  "main": "index.js",
+  "dependencies": {
+    "visionmedia/jade": "*"
+  }
 }
