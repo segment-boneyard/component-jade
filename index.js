@@ -58,8 +58,7 @@ function jadeCompiler (options) {
       // Read and compile our Jade.
       var fullPath = pkg.path(file);
       var string = fs.readFileSync(fullPath, 'utf8');
-      var method = jade.compileClient ? 'compileClient' : 'compile';
-      if (options.html) method = 'render';
+      var method = options.html ? 'render' : 'compileClient';
       var compiled = jade[method](string, {
         compileDebug: false,
         filename: fullPath
