@@ -13,7 +13,7 @@
     "url": "git://github.com/segmentio/component-jade.git"
   },
   "dependencies": {
-    "debug": "~0.7.4",
+    "debug": "~0.7.4"
   },
   "devDependencies" : {
     "component-builder" : "~0.11.2",
