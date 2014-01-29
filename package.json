@@ -13,11 +13,11 @@
     "url": "git://github.com/segmentio/component-jade.git"
   },
   "dependencies": {
-    "debug": "~0.7.4",
-    "jade": "~1.1.4"
+    "debug": "~0.7.4"
   },
-  "devDependencies" : {
-    "component-builder" : "~0.11.2"
+  "devDependencies": {
+    "jade": "~1.1.5",
+    "component-builder": "~0.12.0"
   },
   "main": "index.js"
 }

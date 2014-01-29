@@ -1,116 +1,73 @@
 
-var fs = require('fs')
-  , jade = require('jade')
-  , path = require('path')
-  , debug = require('debug')('component-jade');
-
-
 /**
- * Replace Jade files with compiled Javascript files.
- *
- * @param {Builder|Object} builder (or options)
+ * Module depencenies.
  */
 
-module.exports = function (builder) {
-  if ('function' == typeof builder.build) return plugin(builder);
-
-  var options = builder;
-  return function (builder) {
-    plugin(builder, options);
-  };
-};
-
+var basename = require('path').basename;
+var extname = require('path').extname;
+var debug = require('debug')('component-jade');
+var jade = require('jade');
 
 /**
- * Apply the plugin.
- *
- * @param {Builder} builder
- * @param {Object} options (optional)
+ * Export `templates`.
  */
 
-function plugin (builder, options) {
-  options || (options = {});
-
-  // Before processing any scripts, convert `.jade` files to Javascript.
-  builder.hook('before scripts', jadeCompiler(options));
-
-  if (options.html) return; // don't need the runtime
-
-  // Add the runtime.js to our top-level package's `scripts` array.
-  debug('adding jade-runtime.js to %s', builder.config.name);
-  // Add our runtime to the builder, and add a require call for our runtime,
-  // so it's global for all future template functions.
-  var runtime = fs.readFileSync(__dirname + '/runtime.js', 'utf8');
-  builder.addFile('scripts', 'jade-runtime.js', runtime);
-  builder.append('require("' + builder.config.name + '/jade-runtime");\n');
-}
-
+module.exports = templates;
 
 /**
- * Create a Jade compiler function with `options`.
+ * Compile jade templates.
  *
- * @param {Object} options (optional)
- * @return {Function}
+ * @param {Bool} plain
  */
 
-function jadeCompiler (options) {
-  options || (options = {});
+function templates (plain) {
+  return function (build, done) {
+    setImmediate(done);
+    build.map('templates', function(file, conf){
+      if (!file.contents) return;
+      if ('.jade' != extname(file.filename)) return;
+      debug('compiling: %s', conf.path());
 
-  return function (pkg, callback) {
-
-    // Grab our Jade templates.
-    if (!pkg.config.templates) return callback();
-    var files = pkg.config.templates.filter(filterJade);
-
-    files.forEach(function (file) {
-      debug('compiling: %s', pkg.path(file));
-
-      // Read and compile our Jade.
-      var fullPath = pkg.path(file);
-      var string = fs.readFileSync(fullPath, 'utf8');
-      var method = options.html ? 'render' : 'compileClient';
-      var compiled = jade[method](string, {
+      var opts = {
         compileDebug: false,
-        filename: fullPath
-      });
+        filename: conf.path()
+      }
 
-      if (options.html) compiled = escapeHtml(compiled);
-
-      // Add our new compiled version to the package, with the same name.
-      pkg.removeFile('templates', file);
-      file = file.slice(0, file.length - 5) + '.js';
-      pkg.addFile('scripts', file, 'module.exports = ' + compiled);
+      if (plain) return html(file, opts);
+      return template(file, opts);
     });
-
-    callback();
-  };
+  }
 }
 
-
 /**
- * Escape an HTML `string` when we're outputting straight HTML.
+ * Compile `file` to an html string.
  *
- * @param {String} string
- * @return {String}
+ * @param {String} file
+ * @param {Function} done
  */
 
-function escapeHtml (string) {
-  string = string
-    .replace(/[\\"']/g, '\\$&') // escape slashes and quotes
-    .replace(/\u0000/g, '\\0')
-    .replace(/\n/g,'\'+\n\''); // line breaks should be concatenated
-  string = '\'' + string + '\'';
-  return string;
+function html (file, opts) {
+  console.log('html');
+  file.filename = basename(file.filename, '.jade') + '.html';
+  file.contents = jade.render(file.contents, opts);
+  return file;
 }
 
-
 /**
- * Filter for `.jade` files.
+ * Compile `file` to a reusable template function.
  *
- * @param {String} filename
- * @return {Boolean}
+ * @param {String} file
+ * @param {Function} done
  */
 
-function filterJade (filename) {
-  return path.extname(filename) === '.jade';
+function template (file, opts) {
+  console.log('template');
+  var fn = jade.compileClient(file.contents, opts);
+  file.filename = basename(file.filename, '.jade') + '.js';
+
+  file.contents = 'var jade = require(\'jade-runtime\');'
+    + 'module.exports = '
+    + fn.toString();
+
+  return file;
 }
