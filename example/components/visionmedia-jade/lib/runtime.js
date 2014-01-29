@@ -1,5 +1,3 @@
-
-jade = (function(exports){
 'use strict';
 
 /**
@@ -153,13 +151,11 @@ exports.attrs = function attrs(obj, terse){
  */
 
 exports.escape = function escape(html){
-  var result = String(html)
+  return String(html)
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;');
-  if (result === '' + html) return html;
-  else return result;
 };
 
 /**
@@ -203,7 +199,3 @@ exports.rethrow = function rethrow(err, filename, lineno, str){
     + '\n' + context + '\n\n' + err.message;
   throw err;
 };
-
-  return exports;
-
-})({});
