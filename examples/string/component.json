@@ -3,6 +3,9 @@
   "scripts": [
     "index.js"
   ],
+  "dependencies": {
+    "visionmedia/jade" : "*"
+  },
   "templates": [
     "template.jade"
   ],

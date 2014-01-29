@@ -1,0 +1,13 @@
+{
+  "name": "example",
+  "scripts": [
+    "index.js"
+  ],
+  "dependencies": {
+    "visionmedia/jade" : "*"
+  },
+  "templates": [
+    "template.jade"
+  ],
+  "main": "index.js"
+}
