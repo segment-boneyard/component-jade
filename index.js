@@ -17,15 +17,16 @@ module.exports = templates;
 /**
  * Compile jade templates.
  *
- * @param {Bool} plain
+ * @param {Bool} options
  */
 
-function templates (plain) {
+function templates (type, options) {
   return function (build, done) {
     setImmediate(done);
-    build.map('templates', function(file, conf){
+    build.map(type, function(file, conf){
       if (!file.contents) return;
       if ('.jade' != extname(file.filename)) return;
+      if (!options) options = {};
       debug('compiling: %s', conf.path());
 
       var opts = {
@@ -33,7 +34,7 @@ function templates (plain) {
         filename: conf.path()
       }
 
-      if (plain) return html(file, opts);
+      if (options.string) return html(file, opts);
       return template(file, opts);
     });
   }
@@ -47,8 +48,7 @@ function templates (plain) {
  */
 
 function html (file, opts) {
-  console.log('html');
-  file.filename = basename(file.filename, '.jade') + '.html';
+  file.filename = basename(file.filename) + '.html';
   file.contents = jade.render(file.contents, opts);
   return file;
 }
@@ -61,7 +61,6 @@ function html (file, opts) {
  */
 
 function template (file, opts) {
-  console.log('template');
   var fn = jade.compileClient(file.contents, opts);
   file.filename = basename(file.filename, '.jade') + '.js';
 
