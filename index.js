@@ -3,9 +3,9 @@
  * Module depencenies.
  */
 
+var debug = require('debug')('component-jade');
 var basename = require('path').basename;
 var extname = require('path').extname;
-var debug = require('debug')('component-jade');
 var jade = require('jade');
 
 /**
@@ -17,16 +17,19 @@ module.exports = templates;
 /**
  * Compile jade templates.
  *
- * @param {Bool} options
+ * @param {String} type
+ * @param {Object} options (optional)
  */
 
 function templates (type, options) {
+  if (typeof type != 'string') throw new Error('you need to set a type');
+  if (!options) options = {};
+
   return function (build, done) {
     setImmediate(done);
     build.map(type, function(file, conf){
       if (!file.contents) return;
       if ('.jade' != extname(file.filename)) return;
-      if (!options) options = {};
       debug('compiling: %s', conf.path());
 
       var opts = {
@@ -44,7 +47,7 @@ function templates (type, options) {
  * Compile `file` to an html string.
  *
  * @param {String} file
- * @param {Function} done
+ * @param {Object} opts
  */
 
 function html (file, opts) {
@@ -57,12 +60,12 @@ function html (file, opts) {
  * Compile `file` to a reusable template function.
  *
  * @param {String} file
- * @param {Function} done
+ * @param {Object} opts
  */
 
 function template (file, opts) {
   var fn = jade.compileClient(file.contents, opts);
-  file.filename = basename(file.filename, '.jade') + '.js';
+  file.filename = basename(file.filename) + '.js';
 
   file.contents = 'var jade = require(\'jade-runtime\');'
     + 'module.exports = '
