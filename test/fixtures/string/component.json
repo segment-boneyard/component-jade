@@ -1,0 +1,6 @@
+{
+  "name": "fixture-string",
+  "templates": [
+    "in.jade"
+  ]
+}
