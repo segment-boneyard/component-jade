@@ -21,27 +21,40 @@
   Use the plugin during your build process:
 
   ```js
-  var fs      = require('fs')
-    , Builder = require('component-builder')
-    , jade    = require('component-jade');
-
+  var Builder = require('component-builder');
+  var write = require('fs').readFileSync;
+  var jade = require('component-jade');
   var builder = new Builder(__dirname);
 
-  builder.use(jade);
+  builder
+  .use(Builder.commonjs('scripts'))
+  .use(Builder.concat('scripts'))
 
-  builder.build(function(err, res){
+  // Transpile jade templates to html strings.
+  .use(jade('templates', { string: true }))
+
+  .use(Builder.commonjs('templates'))
+  .use(Builder.concat('templates'))
+
+  .build(function(err, build) {
     if (err) throw err;
-    fs.writeFileSync('build/build.js', res.require + res.js);
-    if (res.css) fs.writeFileSync('build/build.css', res.css);
+
+    var js = build.requirejs;
+    js += build.scripts;
+    js += build.templates;
+    js += build.aliases;
+    write(file, js);
   });
   ```
 
   And then require the files in your Javascript:
 
   ```js
-  var tip      = require('tip')
-    , template = require('template');
+  var template = require('template.jade');
+  var tip = require('tip');
   ```
+
+  __Note:__ You need to add jade and the runtime yourself. For a full working example take a look at `./examples`.
 
 # License
 
