@@ -1,17 +1,16 @@
 {
   "name": "component-jade",
-  "version": "0.5.0",
+  "repository": "git://github.com/segmentio/component-jade.git",
+  "version": "1.0.0",
   "description": "A plugin to transpile Jade files for the component builder.",
   "keywords": [
     "component",
-    "jade"
+    "jade",
+    "builder",
+    "plugin"
   ],
-  "author": "Segment.io <friends@segment.io>",
   "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "git://github.com/segmentio/component-jade.git"
-  },
+  "main": "index.js",
   "dependencies": {
     "debug": "~0.7.4"
   },
@@ -19,6 +18,5 @@
     "jade": "~1.1.5",
     "component-builder": "~0.12.0",
     "mocha": "~1.17.1"
-  },
-  "main": "index.js"
+  }
 }

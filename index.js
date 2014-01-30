@@ -1,8 +1,4 @@
 
-/**
- * Module depencenies.
- */
-
 var debug = require('debug')('component-jade');
 var basename = require('path').basename;
 var extname = require('path').extname;
@@ -35,12 +31,13 @@ function templates (type, options) {
       var opts = {
         compileDebug: false,
         filename: conf.path()
-      }
+      };
 
-      if (options.string) return html(file, opts);
-      return template(file, opts);
+      return options.string
+        ? html(file, opts)
+        : template(file, opts);
     });
-  }
+  };
 }
 
 /**
@@ -66,10 +63,8 @@ function html (file, opts) {
 function template (file, opts) {
   var fn = jade.compileClient(file.contents, opts);
   file.filename = basename(file.filename) + '.js';
-
   file.contents = 'var jade = require(\'jade-runtime\');'
     + 'module.exports = '
     + fn.toString();
-
   return file;
 }

@@ -1,7 +1,8 @@
 
+var assert = require('assert');
 var Builder = require('component-builder');
 var commonjs = Builder.commonjs;
-var concat = Builder.concat
+var concat = Builder.concat;
 var exec = require('child_process').exec;
 var assert = require('assert');
 var jade = require('..');
@@ -17,9 +18,9 @@ describe('component-jade', function () {
     builder = Builder(__dirname + '/fixtures/string');
 
       builder
-      .use(jade('templates', { string: true }))
-      .use(commonjs('templates'))
-      .use(concat('templates'));
+        .use(jade('templates', { string: true }))
+        .use(commonjs('templates'))
+        .use(concat('templates'));
     });
 
     it('should have ext `.jade.html`', function (done) {
@@ -46,9 +47,9 @@ describe('component-jade', function () {
       builder = Builder(__dirname + '/fixtures/template');
 
       builder
-      .use(jade('templates'))
-      .use(commonjs('templates'))
-      .use(concat('templates'))
+        .use(jade('templates'))
+        .use(commonjs('templates'))
+        .use(concat('templates'));
     });
 
     it('should have `ext` .jade.js', function (done) {
