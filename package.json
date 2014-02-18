@@ -1,7 +1,7 @@
 {
   "name": "component-jade",
   "repository": "git://github.com/segmentio/component-jade.git",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A plugin to transpile Jade files for the component builder.",
   "keywords": [
     "component",
