@@ -1,4 +1,3 @@
-
 var debug = require('debug')('component-jade');
 var basename = require('path').basename;
 var extname = require('path').extname;
@@ -24,7 +23,6 @@ function templates (type, options) {
   return function (build, done) {
     setImmediate(done);
     build.map(type, function(file, conf){
-      if (!file.contents) return;
       if ('.jade' != extname(file.filename)) return;
       debug('compiling: %s', conf.path());
 
