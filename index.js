@@ -48,7 +48,6 @@ function templates (type, options) {
  */
 
 function html (file, opts) {
-  file.filename = basename(file.filename) + '.html';
   file.contents = jade.render(file.contents, opts);
   return file;
 }
