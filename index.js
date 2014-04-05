@@ -23,7 +23,7 @@ function templates (type, options) {
   return function (build, done) {
     setImmediate(done);
     build.map(type, function(file, conf){
-      if ('.jade' != extname(file.filename)) return;
+      if ('.jade' != extname(file.filename)) return file;
       debug('compiling: %s', conf.path());
 
       var opts = {
